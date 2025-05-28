@@ -1,9 +1,21 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { DateTime } from 'luxon'
 
 export default class Idioma extends BaseModel {
   @column({ isPrimary: true })
-  public cd_idioma: number = 0
+  declare cd_idioma: number;
 
-  @column()
-  public nm_idioma: string = ''
+  @column({ columnName: 'nm_idioma' })
+  declare nm_idioma: string;
+
+  @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })
+  declare created_at: DateTime
+
+  @column.dateTime({
+    autoCreate: true,
+    autoUpdate: true,
+    columnName: 'updated_at',
+    serializeAs: 'updated_at',
+  })
+  declare updated_at: DateTime
 }
