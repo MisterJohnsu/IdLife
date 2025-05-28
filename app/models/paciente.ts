@@ -1,10 +1,11 @@
 import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations';
+import { LucidModel } from '@adonisjs/lucid/types/model';
 import Convenio  from './convenio.ts'
 import DocumentoProva from './documento_prova.ts'
 import Parentesco from './parentesco.ts'
 import TipoSanguineo from './tipo_sanguineo.ts'
-import { LucidModel } from '@adonisjs/lucid/types/model';
+import Medicos from './medicos.ts'
 import { DateTime } from 'luxon'
 
 
@@ -63,4 +64,8 @@ declare tipoSanguineo: BelongsTo<typeof TipoSanguineo, LucidModel> | null;
 
 @belongsTo(() => DocumentoProva, { foreignKey: 'cd_documento' })
 declare documento: BelongsTo<typeof DocumentoProva, LucidModel> | null;
+
+@belongsTo(() => Medicos, { foreignKey: 'cd_medico' })
+declare medico: BelongsTo<typeof Medicos, LucidModel> | null;
+
 }
