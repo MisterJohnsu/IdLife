@@ -3,8 +3,11 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class Aparelho extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  declare cd_aparelho: number
 
+  @column({})
+  declare nm_aparelho: string
+  
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })
   declare created_at: DateTime
 

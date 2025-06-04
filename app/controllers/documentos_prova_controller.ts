@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import DocumentoProva from '#models/documento_prova'
+import DocumentoProva from '#models/documento'
 
 export default class DocumentosProvaController {
   async index({}: HttpContext) {

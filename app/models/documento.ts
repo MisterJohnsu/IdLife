@@ -1,15 +1,15 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
-export default class DocumentoProva extends BaseModel {
+export default class Documento extends BaseModel {
   @column({ isPrimary: true })
   declare cd_documento: number
 
-  @column({ columnName: 'nm_documento' })
+  @column()
   declare nm_arquivo: string;
 
-  @column({ columnName: 'nm_caminho' })
-  declare nm_caminho: string;
+  @column()
+  declare nm_caminho_arquivo: string;
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })
   declare created_at: DateTime

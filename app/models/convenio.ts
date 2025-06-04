@@ -5,7 +5,7 @@ export default class Convenio extends BaseModel {
   @column({ isPrimary: true })
   declare cd_convenio: number;
 
-  @column({ columnName: 'nm_convenio' })
+  @column({})
   declare nm_convenio: string;
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })

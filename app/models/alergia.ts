@@ -5,7 +5,7 @@ export default class Alergia extends BaseModel {
   @column({ isPrimary: true })
   declare cd_alergia: number
 
-  @column({ columnName: 'nm_alergia' })
+  @column({})
   declare nm_alergia: string;
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })

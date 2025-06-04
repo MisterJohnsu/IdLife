@@ -5,12 +5,21 @@ export default class Medicos extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('cd_medico') // Primary key
-      table.string('crm').notNullable().unique()
-      table.string('nm_medico').notNullable()
-      table.string('especializacao').notNullable()
+      table
+      .increments('cd_medico')
+      .primary()
+      table
+      .string('crm')
+      .notNullable()
+      .unique()
+      table
+      .string('nm_medico')
+      .notNullable()
+      table
+      .string('nm_especializacao')
+      .notNullable()
 
-      table.timestamps(true) // created_at e updated_at
+      table.timestamps(true)
     })
   }
 

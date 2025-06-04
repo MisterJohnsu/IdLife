@@ -5,7 +5,7 @@ export default class Parentesco extends BaseModel {
   @column({ isPrimary: true })
   declare cd_parentesco: number
 
-  @column({ columnName: 'nm_parentesco' })
+  @column()
   declare nm_parentesco: string
 
    @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })

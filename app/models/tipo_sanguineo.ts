@@ -5,7 +5,7 @@ export default class TipoSanguineo extends BaseModel {
   @column({ isPrimary: true })
   declare cd_tipo_sanguineo: number
 
-  @column({ columnName: 'nm_tipo_sanguineo' })
+  @column()
   declare nm_tipo_sanguineo: string
 
    @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })

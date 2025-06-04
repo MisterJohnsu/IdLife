@@ -5,10 +5,10 @@ export default class AlergiaPaciente extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column({columnName: 'cd_paciente'})
+  @column({})
   declare cd_paciente: number;
 
-  @column({ columnName: 'cd_alergia' })
+  @column({})
   declare cd_alergias: number;
 
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })

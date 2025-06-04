@@ -14,7 +14,7 @@ export default class Medico extends BaseModel {
   declare nm_medico: string
 
   @column()
-  declare especializacao: string
+  declare nm_especializacao: string
 
   @hasMany(() => Paciente, { foreignKey: 'cd_medico' })
   declare pacientes: HasMany<typeof Paciente>
