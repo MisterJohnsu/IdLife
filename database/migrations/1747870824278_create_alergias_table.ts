@@ -5,8 +5,12 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('cd_alergias').primary()
-      table.string('nm_alergias').notNullable()
+      table
+      .increments('cd_alergias')
+      .primary()
+      table
+      .string('nm_alergias')
+      .notNullable()
 
       table.timestamps(true)
     })

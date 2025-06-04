@@ -10,6 +10,7 @@ import { DateTime } from 'luxon'
 import DoencaCronica from './doenca_cronica.ts';
 import Idioma from './idioma.ts';
 import MedicamentoPaciente from './medicamento_paciente.ts';
+import Medico from './medicos.ts'
 
 
 export default class Paciente extends BaseModel {
@@ -73,6 +74,17 @@ declare doencasCronicas: ManyToMany<typeof DoencaCronica>
     pivotTimestamps: true,
   })
   declare medicamentos: ManyToMany<typeof MedicamentoPaciente>
+
+  @manyToMany(() => Medico, {
+  pivotTable: 'medicos_pacientes',
+  localKey: 'cd_paciente',
+  pivotForeignKey: 'cd_paciente',
+  relatedKey: 'cd_medico',
+  pivotRelatedForeignKey: 'cd_medico',
+  pivotColumns: ['created_at', 'updated_at'],
+  pivotTimestamps: true
+})
+declare Medicos: ManyToMany<typeof Medico>
   
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })
   declare created_at: DateTime
