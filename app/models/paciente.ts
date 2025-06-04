@@ -9,37 +9,40 @@ import Medicos from './medicos.ts'
 import { DateTime } from 'luxon'
 
 
-export default class Paciente extends BaseModel {
+export default class Pacientes extends BaseModel {
   @column({ isPrimary: true, })
   declare cd_paciente: number
 
-  @column({ columnName: 'nm_paciente' })
+  @column()
   declare nm_paciente: string
 
-  @column({ columnName: 'nm_mae' })
-  declare dt_nascimento: string
-
-  @column({ columnName: 'dt_nascimento' })
-  declare cd_num_telefone_emergencia: string
-
-  @column({ columnName: 'cd_num_telefone_emergencia' })
-  declare nm_num_emergencia: string 
-
-  @column({ columnName: 'nm_num_emergencia' })
+  @column.dateTime({ autoCreate: false })
+  declare dt_nascimento: DateTime
+  
+  @column()
+  declare cd_telefone_ctt_emergencia: string
+  
+  @column()
+  declare nm_ctt_emergencia: string 
+  
+  @column()
   declare tx_info_adicional: string
 
-  @column({ columnName: 'tx_info_adicional' })
+  @column()
   declare cd_parentesco: number
 
-  @column({ columnName: 'cd_tipo_sanguineo' })
+  @column()
   declare cd_tipo_sanguineo: number
 
-  @column({ columnName: 'cd_documento' })
+  @column()
   declare cd_documento: number;
 
-  @column({ columnName: 'cd_convenio' })
+  @column()
   declare cd_convenio: number
-
+  
+  @column()
+  declare cd_medico: number
+  
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })
   declare created_at: DateTime
 

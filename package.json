@@ -58,7 +58,8 @@
     "@vinejs/vine": "^3.0.1",
     "better-sqlite3": "^11.10.0",
     "luxon": "^3.6.1",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "sqlite3": "^5.1.7"
   },
   "hotHook": {
     "boundaries": [

@@ -6,43 +6,43 @@ export default class PacientesController {
     return await Paciente.all()
   }
 
-  async store({ request }: HttpContext) {
-    const data = request.only([
-      'nm_paciente',
-      'dt_nascimento',
-      'cd_num_telefone_emergencia',
-      'nm_num_emergencia',
-      'tx_info_adicional',
-      'cd_parentesco',
-      'cd_tipo_sanguineo',
-      'cd_documento',
-      'cd_convenio',
-      'cd_medico',
-    ])
-    return await Paciente.create(data)
+  async create({ request, response }: HttpContext) {
+    try {
+      console.log('request 1=========>')
+      const { data } = request.all()
+      console.log('data 1=========>', data)
+      if (!data) {
+        return response.badRequest({ message: 'No data provided for creation' })
+      }
+      console.log('data =========>', data)
+      const paciente = await Paciente.create(data)
+      return response.created(paciente)
+    } catch (error) {
+      throw error
+    }
   }
 
   async show({ params }: HttpContext) {
     return await Paciente.findOrFail(params.id)
   }
 
-  async update({ params, request }: HttpContext) {
-    const paciente = await Paciente.findOrFail(params.id)
-    const data = request.only([
-      'nm_paciente',
-      'dt_nascimento',
-      'cd_num_telefone_emergencia',
-      'nm_num_emergencia',
-      'tx_info_adicional',
-      'cd_parentesco',
-      'cd_tipo_sanguineo',
-      'cd_documento',
-      'cd_convenio',
-      'cd_medico',
-    ])
+  async update({ params, request, response }: HttpContext) {
+    try {
+      const paciente = await Paciente.findOrFail(params.id)
+      if (!paciente) {
+        return response.notFound({ message: 'Paciente not found' })
+      }
+    const { data } = request.all()
+    if (!data) {
+      return response.badRequest({ message: 'No data provided for update' })
+    }
+  
     paciente.merge(data)
     await paciente.save()
-    return paciente
+    return response.ok(paciente)
+    } catch (error) {
+      throw error
+    }
   }
 
   async destroy({ params, response }: HttpContext) {
