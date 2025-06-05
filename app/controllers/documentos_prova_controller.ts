@@ -6,21 +6,39 @@ export default class DocumentosProvaController {
     return await DocumentoProva.all()
   }
 
-  async store({ request }: HttpContext) {
-    const data = request.only(['nm_arquivo', 'nm_caminho'])
-    return await DocumentoProva.create(data)
+async create({ request, response }: HttpContext) {
+  try {
+    const { data } = request.all()
+    if (!data) {
+      return response.badRequest({ message: 'No data provided for creation' })
+    }
+    const documento = await DocumentoProva.create(data)
+    return response.created(documento)
+  } catch (error) {
+    throw error
   }
+}
 
   async show({ params }: HttpContext) {
     return await DocumentoProva.findOrFail(params.id)
   }
 
-  async update({ params, request }: HttpContext) {
-    const documento = await DocumentoProva.findOrFail(params.id)
-    const data = request.only(['nm_arquivo', 'nm_caminho'])
+  async update({ params, request, response }: HttpContext) {
+    try {
+      const documento = await DocumentoProva.findOrFail(params.id)
+   if (!documento) {
+      return response.notFound({ message: 'Documento not found' })
+    }
+    const { data } = request.all()
+    if (!data) {
+      return response.badRequest({ message: 'No data provided for update' })
+    }
     documento.merge(data)
     await documento.save()
     return documento
+    } catch (error) {
+      throw error
+    }
   }
 
   async destroy({ params, response }: HttpContext) {

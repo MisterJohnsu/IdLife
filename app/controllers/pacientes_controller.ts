@@ -8,13 +8,10 @@ export default class PacientesController {
 
   async create({ request, response }: HttpContext) {
     try {
-      console.log('request 1=========>')
       const { data } = request.all()
-      console.log('data 1=========>', data)
       if (!data) {
         return response.badRequest({ message: 'No data provided for creation' })
       }
-      console.log('data =========>', data)
       const paciente = await Paciente.create(data)
       return response.created(paciente)
     } catch (error) {

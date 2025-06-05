@@ -4,7 +4,7 @@ export default class extends BaseSchema {
   protected tableName = 'pacientes'
 
   public async up() {
-    this.schema.alterTable(this.tableName, (table) => {
+    this.schema.createTable(this.tableName, (table) => {
       table
       .increments('cd_paciente')
       .primary()
