@@ -1,7 +1,7 @@
 import router from "@adonisjs/core/services/router";
 
 const PacientesController = () => import("#controllers/pacientes_controller");
-const DocumentosProvaController = () => import("#controllers/documentos_prova_controller");
+const DocumentosController = () => import("#controllers/documentos_prova_controller");
 
 router.group(() => {
     router.post('/register', [PacientesController, 'create'])
@@ -12,5 +12,5 @@ router.group(() => {
 
 
 router.group(() => {
-    router.post('/register', [DocumentosProvaController, 'create'])
+    router.post('/register', [DocumentosController, 'create'])
 }).prefix("documentos")

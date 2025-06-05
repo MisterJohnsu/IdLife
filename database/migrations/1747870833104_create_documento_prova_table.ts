@@ -5,9 +5,15 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('cd_documento').primary()
-      table.string('nm_arquivo').notNullable()
-      table.string('nm_caminho_arquivo').notNullable()
+      table
+      .increments('cd_documento')
+      .primary()
+      table
+      .string('nm_arquivo')
+      .notNullable()
+      table
+      .string('nm_caminho_arquivo')
+      .notNullable()
 
       table.timestamps(true)
     })
