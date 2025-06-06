@@ -6,22 +6,22 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table
-      .integer('cd_paciente')
-      .unsigned()
-      .references('cd_paciente')
-      .inTable('pacientes')
-      .onDelete('CASCADE')
-      .notNullable()
+        .integer('cd_paciente')
+        .unsigned()
+        .references('cd_paciente')
+        .inTable('pacientes')
+        .onDelete('CASCADE')
+        .notNullable()
       table
-      .integer('cd_medico')
-      .unsigned()
-      .references('cd_medico')
-      .inTable('medicos')
-      .onDelete('CASCADE')
-      .notNullable()
+        .integer('cd_medico')
+        .unsigned()
+        .references('cd_medico')
+        .inTable('medicos')
+        .onDelete('CASCADE')
+        .notNullable()
 
       table.primary(['cd_paciente', 'cd_medico'])
-      
+
       table.timestamps(true)
     })
   }

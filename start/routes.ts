@@ -3,6 +3,9 @@ import router from '@adonisjs/core/services/router'
 const PacientesController = () => import('#controllers/pacientes_controller')
 const DocumentosController = () => import('#controllers/documentos_prova_controller')
 const ConveniosController = () => import('#controllers/convenios_controller')
+const MedicosController = () => import('#controllers/medicos_controller')
+const ParentescosController = () => import('#controllers/parentescos_controller')
+const TipoSanguineosController = () => import('#controllers/tipo_sanguineos_controller')
 
 router
   .group(() => {
@@ -30,3 +33,30 @@ router
     router.delete('/:id', [ConveniosController, 'destroy'])
   })
   .prefix('convenios')
+
+router
+  .group(() => {
+    router.post('/register', [MedicosController, 'create'])
+    router.get('/:id', [MedicosController, 'show'])
+    router.put('/:id', [MedicosController, 'update'])
+    router.delete('/:id', [MedicosController, 'destroy'])
+  })
+  .prefix('medicos')
+
+router
+  .group(() => {
+    router.post('/register', [ParentescosController, 'create'])
+    router.put('/:id', [ParentescosController, 'update'])
+    router.get('/:id', [ParentescosController, 'show'])
+    router.delete('/:id', [ParentescosController, 'destroy'])
+  })
+  .prefix('parentescos')
+
+router
+  .group(() => {
+    router.post('/register', [TipoSanguineosController, 'create'])
+    router.put('/:id', [TipoSanguineosController, 'update'])
+    router.get('/:id', [TipoSanguineosController, 'show'])
+    router.delete('/:id', [TipoSanguineosController, 'destroy'])
+  })
+  .prefix('tipos_sanguineos')

@@ -1,31 +1,59 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Parentesco from '#models/parentesco'
+import { request } from 'http'
 
 export default class ParentescosController {
-  async index({}: HttpContext) {
-    return await Parentesco.all()
+  async create({ request, response }: HttpContext) {
+    try {
+      const data = request.all()
+
+      if (!data) {
+        return response.badRequest({ message: 'No data provided for creation' })
+      }
+
+      const parentesco = await Parentesco.create(data)
+
+      return response.created(parentesco)
+    } catch (error) {
+      throw error
+    }
   }
 
-  async store({ request }: HttpContext) {
-    const data = request.only(['nm_parentesco'])
-    return await Parentesco.create(data)
+  async show({ params, response }: HttpContext) {
+    try {
+      const parentesco = await Parentesco.findOrFail(params.id)
+
+      return response.ok(parentesco)
+    } catch (error) {
+      throw error
+    }
   }
 
-  async show({ params }: HttpContext) {
-    return await Parentesco.findOrFail(params.id)
-  }
+  async update({ params, request, response }: HttpContext) {
+    try {
+      const { data } = request.all()
+      const parentesco = await Parentesco.findOrFail(params.id)
 
-  async update({ params, request }: HttpContext) {
-    const parentesco = await Parentesco.findOrFail(params.id)
-    const data = request.only(['nm_parentesco'])
-    parentesco.merge(data)
-    await parentesco.save()
-    return parentesco
+      if (!data) {
+        return response.badRequest({ message: 'No data provided for update' })
+      }
+
+      parentesco.merge(data)
+      await parentesco.save()
+
+      return response.ok(parentesco)
+    } catch (error) {
+      throw error
+    }
   }
 
   async destroy({ params, response }: HttpContext) {
-    const parentesco = await Parentesco.findOrFail(params.id)
-    await parentesco.delete()
-    return response.noContent()
+    try {
+      const parentesco = await Parentesco.findOrFail(params.id)
+      await parentesco.delete()
+      return response.noContent()
+    } catch (error) {
+      throw error
+    }
   }
 }
