@@ -10,9 +10,9 @@ const TipoSanguineosController = () => import('#controllers/tipo_sanguineos_cont
 router
   .group(() => {
     router.post('/register', [PacientesController, 'create'])
-    router.put('/:id', [PacientesController, 'update'])
-    router.get('/:id', [PacientesController, 'show'])
-    router.delete('/:id', [PacientesController, 'destroy'])
+    router.put('/:cpf', [PacientesController, 'update'])
+    router.get('/:cpf', [PacientesController, 'show'])
+    router.delete('/:cpf', [PacientesController, 'destroy'])
   })
   .prefix('pacientes')
 
@@ -37,9 +37,9 @@ router
 router
   .group(() => {
     router.post('/register', [MedicosController, 'create'])
-    router.get('/:id', [MedicosController, 'show'])
-    router.put('/:id', [MedicosController, 'update'])
-    router.delete('/:id', [MedicosController, 'destroy'])
+    router.get('/:crm', [MedicosController, 'show'])
+    router.put('/:crm', [MedicosController, 'update'])
+    router.delete('/:crm', [MedicosController, 'destroy'])
   })
   .prefix('medicos')
 

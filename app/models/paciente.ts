@@ -2,8 +2,14 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
 export default class Paciente extends BaseModel {
-  @column({ isPrimary: true, })
+  @column({ isPrimary: true })
   declare cd_paciente: number
+
+  @column()
+  declare nm_sexo: string
+
+  @column()
+  declare cpf: number
 
   @column()
   declare nm_paciente: string
@@ -27,7 +33,7 @@ export default class Paciente extends BaseModel {
   declare cd_tipo_sanguineo: number
 
   @column()
-  declare cd_documento: number;
+  declare cd_documento: number
 
   @column()
   declare cd_convenio: number

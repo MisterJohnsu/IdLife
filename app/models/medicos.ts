@@ -6,7 +6,7 @@ export default class Medico extends BaseModel {
   declare cd_medico: number
 
   @column()
-  declare crm: string
+  declare crm: number
 
   @column()
   declare nm_medico: string
