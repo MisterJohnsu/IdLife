@@ -8,6 +8,8 @@ export default class Medicos extends BaseSchema {
       table.increments('cd_medico').primary()
       table.integer('crm').notNullable().unique()
       table.string('nm_medico').notNullable()
+      table.string('email').notNullable().unique()
+      table.string('senha').notNullable()
       table.string('nm_especializacao').notNullable()
 
       table.timestamps(true)

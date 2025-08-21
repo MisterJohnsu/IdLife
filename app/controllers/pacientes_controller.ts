@@ -1,184 +1,221 @@
+import { HttpContext } from '@adonisjs/core/http'
+import hash from '@adonisjs/core/services/hash'
 import Paciente from '#models/paciente'
-import type { HttpContext } from '@adonisjs/core/http'
 
-export default class PacientesController {
-  /**
-   * Create a new Paciente
-   *
-   * @body {Object} data
-   * @body {number} data.cd_paciente
-   * @body {string} data.nm_paciente
-   * @body {string} data.dt_nascimento
-   * @body {string} data.cd_telefone_ctt_emergencia
-   * @body {string} data.nm_ctt_emergencia
-   * @body {string} data.tx_info_adicional
-   * @body {number} data.cd_parentesco
-   * @body {number} data.cd_tipo_sanguineo
-   * @body {number} data.cd_documento
-   * @body {number} data.cd_convenio
-   * @body {number} data.cd_medico
-   *
-   * @response {Object} paciente
-   * @response {number} paciente.cd_paciente
-   * @response {string} paciente.nm_paciente
-   * @response {string} paciente.dt_nascimento
-   * @response {string} paciente.cd_telefone_ctt_emergencia
-   * @response {string} paciente.nm_ctt_emergencia
-   * @response {string} paciente.tx_info_adicional
-   * @response {number} paciente.cd_parentesco
-   * @response {number} paciente.cd_tipo_sanguineo
-   * @response {number} paciente.cd_documento
-   * @response {number} paciente.cd_convenio
-   * @response {number} paciente.cd_medico
-   *
-   * @status 201
-   * @throws {HttpException}
-   * @throws {ValidationError}
-   */
-  async create({ request, response }: HttpContext) {
+export default class PacienteController {
+  public async register({ request, response }: HttpContext) {
     try {
-      const { data } = request.all()
+      // Campos obrigatórios
+      const requiredFields = [
+        'nm_paciente',
+        'email',
+        'cpf',
+        'nm_sexo',
+        'nm_tipo_sanguineo',
+        'cd_telefone',
+        'dt_nascimento',
+        'password'
+      ]
 
-      if (!data) {
-        return response.badRequest({ message: 'No data provided for creation' })
+      // Campos opcionais
+      const optionalFields = [
+        'nm_convenio',
+        'nm_alergia',
+        'nm_aparelho',
+        'nm_medicamentos',
+        'tx_info_adicional',
+        'nm_doenca',
+        'cd_telefone_ctt_emergencia',
+        'nm_ctt_emergencia'
+      ]
+
+      // Verificar se todos os campos obrigatórios estão presentes
+      for (const field of requiredFields) {
+        if (!request.input(field)) {
+          return response.status(422).json({
+            error: `O campo ${field} é obrigatório`
+          })
+        }
       }
 
-      const paciente = await Paciente.create(data)
+      // Obter campos obrigatórios
+      const data = request.only(requiredFields)
 
-      return response.created(paciente)
+      // Adicionar campos opcionais apenas se estiverem presentes no request
+      const finalData = { ...data }
+      for (const field of optionalFields) {
+        const value = request.input(field)
+        if (value !== undefined && value !== null && value !== '') {
+          finalData[field] = value
+        }
+      }
+
+      // Verificar se email já existe
+      const existingPaciente = await Paciente.findBy('email', data.email)
+      if (existingPaciente) {
+        return response.status(409).json({
+          error: 'Email já cadastrado'
+        })
+      }
+
+      // Verificar se CPF já existe
+      const existingCpf = await Paciente.findBy('cpf', data.cpf)
+      if (existingCpf) {
+        return response.status(409).json({
+          error: 'CPF já cadastrado'
+        })
+      }
+
+      // Hash da senha
+      finalData.password = await hash.make(data.password)
+
+      // Criar paciente
+      const paciente = await Paciente.create(finalData)
+
+      return response.status(201).json({
+        message: 'Paciente cadastrado com sucesso',
+        user: {
+          cd_paciente: paciente.cd_paciente,
+          nm_paciente: paciente.nm_paciente,
+          email: paciente.email,
+          cpf: paciente.cpf,
+          nm_tipo_sanguineo: paciente.nm_tipo_sanguineo,
+          cd_telefone: paciente.cd_telefone,
+        }
+      })
     } catch (error) {
-      throw error
+      console.error('Erro no registro do paciente:', error)
+      return response.status(500).json({
+        error: 'Erro interno do servidor',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      })
     }
   }
 
-  /**
-   * Fetches a paciente by its ID
-   *
-   * @queryParam {number} id required
-   *
-   * @response {Object} paciente
-   * @response {number} paciente.cd_paciente
-   * @response {string} paciente.nm_paciente
-   * @response {string} paciente.dt_nascimento
-   * @response {string} paciente.cd_telefone_ctt_emergencia
-   * @response {string} paciente.nm_ctt_emergencia
-   * @response {string} paciente.tx_info_adicional
-   * @response {number} paciente.cd_parentesco
-   * @response {number} paciente.cd_tipo_sanguineo
-   * @response {number} paciente.cd_documento
-   * @response {number} paciente.cd_convenio
-   * @response {number} paciente.cd_medico
-   *
-   * @status 200
-   * @throws {HttpException}
-   * @throws {ValidationError}
-   */
-  async show({ params, response }: HttpContext) {
+  public async update({ params, request, response }: HttpContext) {
     try {
-      const cpf = params.cpf
+      const paciente = await Paciente.findOrFail(params.id)
+      
+      // Campos que podem ser atualizados
+      const updateFields = [
+        'nm_paciente',
+        'cd_telefone',
+        'nm_convenio',
+        'nm_alergia',
+        'nm_aparelho',
+        'nm_medicamentos',
+        'tx_info_adicional',
+        'nm_doenca',
+        'cd_telefone_ctt_emergencia',
+        'nm_ctt_emergencia'
+      ]
 
-      if (!cpf) {
-        return response.badRequest({ message: 'Paciente ID is required' })
+      // Obter apenas os campos que foram enviados na requisição
+      const data: any = {}
+      for (const field of updateFields) {
+        const value = request.input(field)
+        if (value !== undefined) {
+          data[field] = value
+        }
       }
 
-      const paciente = await Paciente.findBy('cpf', cpf)
-
-      if (!paciente) {
-        return response.notFound({ message: 'Paciente not found' })
-      }
-
-      return response.ok(paciente)
-    } catch (error) {
-      throw error
-    }
-  }
-
-  /**
-   * Updates a paciente by its ID
-   *
-   * @queryParam {number} id required
-   *
-   * @requestBody {Object} paciente
-   * @requestBody {string} paciente.nm_paciente
-   * @requestBody {string} paciente.dt_nascimento
-   * @requestBody {string} paciente.cd_telefone_ctt_emergencia
-   * @requestBody {string} paciente.nm_ctt_emergencia
-   * @requestBody {string} paciente.tx_info_adicional
-   * @requestBody {number} paciente.cd_parentesco
-   * @requestBody {number} paciente.cd_tipo_sanguineo
-   * @requestBody {number} paciente.cd_documento
-   * @requestBody {number} paciente.cd_convenio
-   * @requestBody {number} paciente.cd_medico
-   *
-   * @response {Object} paciente
-   * @response {number} paciente.cd_paciente
-   * @response {string} paciente.nm_paciente
-   * @response {string} paciente.dt_nascimento
-   * @response {string} paciente.cd_telefone_ctt_emergencia
-   * @response {string} paciente.nm_ctt_emergencia
-   * @response {string} paciente.tx_info_adicional
-   * @response {number} paciente.cd_parentesco
-   * @response {number} paciente.cd_tipo_sanguineo
-   * @response {number} paciente.cd_documento
-   * @response {number} paciente.cd_convenio
-   * @response {number} paciente.cd_medico
-   *
-   * @status 200
-   * @throws {HttpException}
-   * @throws {ValidationError}
-   */
-  async update({ params, request, response }: HttpContext) {
-    try {
-      const { data } = request.all()
-      const cpf = params.cpf
-
-      if (!cpf || !data) {
-        console.warn('Invalid request data for update')
-        return response.badRequest({ message: 'Invalid data' })
-      }
-
-      const paciente = await Paciente.findBy('cpf', cpf)
-
-      if (!paciente) {
-        return response.notFound({ message: 'Paciente not found' })
-      }
-
+      // Atualizar apenas os campos fornecidos
       paciente.merge(data)
       await paciente.save()
 
-      return response.ok(paciente)
+      return response.json({
+        message: 'Paciente atualizado com sucesso',
+        paciente
+      })
     } catch (error) {
-      throw error
+      console.error('Erro ao atualizar paciente:', error)
+      return response.status(500).json({
+        error: 'Erro ao atualizar paciente',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      })
     }
   }
 
-  /**
-   * Deletes a paciente by its ID
-   *
-   * @queryParam {number} id required
-   *
-   * @status 204
-   * @throws {HttpException}
-   * @throws {ValidationError}
-   */
-  async destroy({ params, response }: HttpContext) {
+  // Outros métodos permanecem iguais...
+  public async index({ response }: HttpContext) {
     try {
-      const cpf = params.cpf
-
-      if (!cpf) {
-        return response.badRequest({ message: 'Paciente ID is required' })
-      }
-
-      const paciente = await Paciente.findBy('cpf', cpf)
-
-      if (!paciente) {
-        return response.notFound({ message: 'Paciente not found' })
-      }
-
-      await paciente.delete()
-      return response.noContent()
+      const pacientes = await Paciente.all()
+      return response.json(pacientes)
     } catch (error) {
-      throw error
+      console.error('Erro ao buscar pacientes:', error)
+      return response.status(500).json({
+        error: 'Erro ao buscar pacientes'
+      })
+    }
+  }
+
+  public async show({ params, response }: HttpContext) {
+    try {
+      const paciente = await Paciente.findOrFail(params.id)
+      return response.json(paciente)
+    } catch (error) {
+      return response.status(404).json({
+        error: 'Paciente não encontrado'
+      })
+    }
+  }
+
+  public async destroy({ params, response }: HttpContext) {
+    try {
+      const paciente = await Paciente.findOrFail(params.id)
+      await paciente.delete()
+
+      return response.json({
+        message: 'Paciente removido com sucesso'
+      })
+    } catch (error) {
+      return response.status(404).json({
+        error: 'Paciente não encontrado'
+      })
+    }
+  }
+
+  // Método para atualizar apenas informações médicas
+  public async updateMedicalInfo({ params, request, response }: HttpContext) {
+    try {
+      const paciente = await Paciente.findOrFail(params.id)
+      
+      // Campos médicos que podem ser atualizados
+      const medicalFields = [
+        'nm_convenio',
+        'nm_alergia',
+        'nm_aparelho',
+        'nm_medicamentos',
+        'tx_info_adicional',
+        'nm_doenca',
+        'cd_telefone_ctt_emergencia',
+        'nm_ctt_emergencia',
+        'cd_medico'
+      ]
+
+      // Obter apenas os campos que foram enviados na requisição
+      const data: any = {}
+      for (const field of medicalFields) {
+        const value = request.input(field)
+        if (value !== undefined) {
+          data[field] = value
+        }
+      }
+
+      // Atualizar apenas os campos fornecidos
+      paciente.merge(data)
+      await paciente.save()
+
+      return response.json({
+        message: 'Informações médicas atualizadas com sucesso',
+        paciente
+      })
+    } catch (error) {
+      console.error('Erro ao atualizar informações médicas:', error)
+      return response.status(500).json({
+        error: 'Erro ao atualizar informações médicas',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      })
     }
   }
 }

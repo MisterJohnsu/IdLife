@@ -1,49 +1,68 @@
-import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class Paciente extends BaseModel {
+  public static table = 'pacientes'
+
   @column({ isPrimary: true })
   declare cd_paciente: number
+
+  // Campos obrigatórios
+  @column()
+  declare nm_paciente: string
+
+  @column()
+  declare email: string
+
+  @column()
+  declare cpf: string
 
   @column()
   declare nm_sexo: string
 
   @column()
-  declare cpf: number
+  declare nm_tipo_sanguineo: string
 
   @column()
-  declare nm_paciente: string
+  declare cd_telefone: string
 
   @column()
   declare dt_nascimento: string
 
+  @column({ serializeAs: null })
+  declare password: string
+
+  // Campos opcionais
   @column()
-  declare cd_telefone_ctt_emergencia: string
+  declare nm_convenio?: string | null
 
   @column()
-  declare nm_ctt_emergencia: string
+  declare nm_alergia?: string | null
 
   @column()
-  declare tx_info_adicional: string
+  declare nm_aparelho?: string | null
 
   @column()
-  declare cd_parentesco: number
+  declare nm_medicamentos?: string | null
 
   @column()
-  declare cd_tipo_sanguineo: number
+  declare tx_info_adicional?: string | null
 
   @column()
-  declare cd_documento: number
+  declare nm_doenca?: string | null
 
   @column()
-  declare cd_convenio: number
+  declare cd_telefone_ctt_emergencia?: string | null
 
   @column()
-  declare cd_medico: number
+  declare nm_ctt_emergencia?: string | null
+
+  @column()
+  declare cd_medico?: number | null
 
   @column.dateTime({ autoCreate: true })
-  declare created_at: DateTime
+  declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updated_at: DateTime
+  declare updatedAt: DateTime
 }

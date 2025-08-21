@@ -12,8 +12,14 @@ export default class Medico extends BaseModel {
   declare nm_medico: string
 
   @column()
-  declare nm_especializacao: string
+  declare email: string
 
+  @column()
+  declare password: string
+
+  @column()
+  declare nm_especializacao: string
+  
   @column.dateTime({ autoCreate: true, columnName: 'created_at', serializeAs: 'created_at' })
   declare created_at: DateTime
 
